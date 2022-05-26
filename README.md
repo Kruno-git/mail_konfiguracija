@@ -1,6 +1,6 @@
 hear ye hear ye!
 
-This is arch linux short script for basic installation of snap (AUR), influxdb and grafana so you can have a fancy graphicl web interface for system monitoring on your servers.
+Nastavak muke IS-a. Mail server. Slijedite kuharicu do zadnjeg slova i zamjenite svoje fajlove s ovima. Naravno za svaki slučaj svoje backupajte.
 
 be gone daemons!
 
