@@ -1,0 +1,89 @@
+yum install postfix dovecot cyrus-sasl-gssapi cyrus-sasl ntp ipa-admintools ipa-client oddjob bind-utils mailx -y --nogpgcheck
+hostnamectl set-hostname # Postaviti hostname mail servera
+# Prilagodavanje mreznih postavki virtualke <interface> i <ip_addr> zamjenite sa svojim parametrima
+
+nmcli conn mod <interface> ipv4.addresses <ip_addr> 
+nmcli conn mod <interface> ipv4.gateway <ip_addr>
+nmcli conn mod <interface> ipv4.method manual
+nmcli conn mod <interface> +ipv4.dns <ip_addr_idm_ns1> 
+nmcli conn down <interface>
+nmcli conn up <interface>
+nmcli con mod <interface> connection.autoconnect yes
+nmcli -p con show <interface> # check konfiguracije mreznih postavki (alternativno - vi /etc/sysconfig/network-scripts/ifcfg-<interface name>)
+
+# Prilagodit /etc/hosts datoteku, uvrstiti ip addr i domenu mail i ipa servera 
+systemctl stop ntpd
+echo 'server <ip_addr_idm> iburst' >> /etc/ntp.conf
+timedatectl set-ntp 1 # set ntp True
+npdate <ip_addr_idm> # ponovimo naredbu dva puta radi tocnije sinkronizacije sa ipa serverom (promijeniti parametre unutar <>)
+systemctl start ntpd
+systemctl status ntpd
+
+ipa-client install
+kinit admin 
+ipa-getkeytab -s domena.ipa.servera -p smtp/domena.mail.servera -k /etc/postfix/smtp.keytab # prvotno bi trebalo svakako napraviti host i principal na ipa serveru
+
+chown root:mail /etc/postfix/smtp.keytab # promjena vlasnickih prava keytabu
+chmod 640 /etc/postfix/smtp.keytab
+mkdir /etc/postfix-certs
+chcon -t cert_t /etc/postfix-certs
+ipa-getcert request -r -f /etc/postfix-certs/smtp.crt -k /etc/postfix-certs/smtp.key -N CN=mail.domena.ovdje -D mail.domena.ovdje -K smtp/mail.domena.ovdje
+chkconfig postfix on
+systemctl status postfix
+vi /etc/postfix/ldap_aliases.cf # pogledati primjer datoteke u git folderu
+postconf -e ' myhostname = hrfd.ms.hrv.nato.int'
+postconf -e ' mydomain = hrfd.ms.hrv.nato.int'
+postconf -e ' myorigin = $mydomain'
+postconf -e 'virtual_alias_domains = hrfd.ms.hrv.nato.int'
+postmap /etc/postfix/ldap_aliases.cf
+postconf -e ' virtual_alias_maps = ldap:/etc/postfix/ldap_aliases.cf '
+postconf -e ' import_environment = MAIL_CONFIG MAIL_DEBUG MAIL_LOGTAG TZ XAUTHORITY DISPLAY LANG=C KRB5_KTNAME=/etc/postfix/smtp.keytab'
+postconf -e ' smtpd_client_restrictions = permit_sasl_authenticated, reject'
+postconf -e ' smtpd_recipient_restrictions = permit_sasl_authenticated permit_mynetworks  check_relay_domains'
+postconf -e ' smtpd_sender_restrictions = permit_sasl_authenticated permit_mynetworks'
+postconf -e ' smtpd_sasl_auth_enable = yes'
+postconf -e ' smtpd_sasl_path = smtpd'
+postconf -e ' smtpd_sasl_tls_security_options = $smtpd_sasl_security_options'
+postconf -e ' broken_sasl_auth_clients = yes'
+postconf -e ' smtpd_sasl_authenticated_header = yes'
+postconf -e ' smtpd_sasl_security_options = noanonymous'
+postconf -e ' smtpd_sasl_local_domain = HRFD.MS.HRV.NATO.INT'
+postconf -e ' smtpd_tls_auth_only = yes'
+postconf -e ' smtpd_tls_received_header = yes'
+postconf -e ' smtpd_tls_session_cache_timeout = 3600s'
+postconf -e ' smtpd_tls_key_file = /etc/postfix-certs/smtp.key'
+postconf -e ' smtpd_tls_cert_file = /etc/postfix-certs/smtp.crt'
+postconf -e ' smtpd_tls_CAfile = /etc/ipa/ca.crt'
+postconf -e ' smtpd_tls_security_level = may'
+postconf -e ' inet_interfaces = all'
+postconf -e ' mydestination = $mydomain'
+postconf -e ' strict_mailbox_ownership = no'
+postconf -e ' mynetworks_style = class'
+postconf -e ' mail_name = Postfix'
+postconf -e ' mail_version = 2.10.1'
+restorecon -R /etc/postfix/
+vi /etc/sasl2/smtpd.conf # vidjeti primjer datoteke na gitu
+vi /etc/postfix/master.cf # vidjeti primjer datoteke na gitu
+systemctl start saslauthd
+systemctl enable saslauthd
+systemctl restart postfix
+systemctl status postfix
+ipa-getkeytab -s ipa.domena.ovdje -p imap/mail.domena.ovdje -k /etc/dovecot/krb5.keytab
+chown root:dovecot /etc/dovecot/krb5.keytab
+chmod 640 /etc/dovecot/krb5.keytab
+mkdir /etc/dovecot-certs
+chcon -t cert_t /etc/dovecot-certs
+ipa-getcert request -r -f /etc/dovecot-certs/imap.crt -k /etc/dovecot-certs/imap.key -N CN=mail.domena.ovdje -D mail.domena.ovdje -K imap/mail.domena.ovdje
+vi /etc/dovecot/dovecot.conf
+vi /etc/dovecot/conf.d/10-auth.conf
+vi /etc/dovecot/conf.d/10-auth.conf 
+vi /etc/dovecot/conf.d/10-ssl.conf
+ipa group-add-member
+chmod 770 /home
+chgrp mailusers /home
+chcon -t user_home_t /home
+getent group mailusers
+vi /etc/dovecot/conf.d/10-mail.conf
+systemctl restart dovecot
+systemctl status dovecot
+
