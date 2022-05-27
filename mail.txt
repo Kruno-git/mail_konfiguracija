@@ -13,7 +13,7 @@ nmcli -p con show <interface> # check konfiguracije mreznih postavki (alternativ
 
 # Prilagodit /etc/hosts datoteku, uvrstiti ip addr i domenu mail i ipa servera 
 systemctl stop ntpd
-echo 'server <ip_addr_idm> iburst' >> /etc/ntp.conf
+echo 'server <ip_addr_idm> iburst' >> /etc/ntp.conf # Možemo otići ručno u datoteku upisati isto, te zakomentirati generičke ntp servere
 timedatectl set-ntp 1 # set ntp True
 npdate <ip_addr_idm> # ponovimo naredbu dva puta radi tocnije sinkronizacije sa ipa serverom (promijeniti parametre unutar <>)
 systemctl start ntpd
@@ -31,10 +31,10 @@ ipa-getcert request -r -f /etc/postfix-certs/smtp.crt -k /etc/postfix-certs/smtp
 chkconfig postfix on
 systemctl status postfix
 vi /etc/postfix/ldap_aliases.cf # pogledati primjer datoteke u git folderu
-postconf -e ' myhostname = hrfd.ms.hrv.nato.int'
-postconf -e ' mydomain = hrfd.ms.hrv.nato.int'
+postconf -e ' myhostname = domena ovdje'
+postconf -e ' mydomain = domena.ovdje'
 postconf -e ' myorigin = $mydomain'
-postconf -e 'virtual_alias_domains = hrfd.ms.hrv.nato.int'
+postconf -e 'virtual_alias_domains = domena ovdje'
 postmap /etc/postfix/ldap_aliases.cf
 postconf -e ' virtual_alias_maps = ldap:/etc/postfix/ldap_aliases.cf '
 postconf -e ' import_environment = MAIL_CONFIG MAIL_DEBUG MAIL_LOGTAG TZ XAUTHORITY DISPLAY LANG=C KRB5_KTNAME=/etc/postfix/smtp.keytab'
@@ -47,7 +47,7 @@ postconf -e ' smtpd_sasl_tls_security_options = $smtpd_sasl_security_options'
 postconf -e ' broken_sasl_auth_clients = yes'
 postconf -e ' smtpd_sasl_authenticated_header = yes'
 postconf -e ' smtpd_sasl_security_options = noanonymous'
-postconf -e ' smtpd_sasl_local_domain = HRFD.MS.HRV.NATO.INT'
+postconf -e ' smtpd_sasl_local_domain = KERBEROS.REALM.OVDJE'
 postconf -e ' smtpd_tls_auth_only = yes'
 postconf -e ' smtpd_tls_received_header = yes'
 postconf -e ' smtpd_tls_session_cache_timeout = 3600s'
@@ -62,8 +62,8 @@ postconf -e ' mynetworks_style = class'
 postconf -e ' mail_name = Postfix'
 postconf -e ' mail_version = 2.10.1'
 restorecon -R /etc/postfix/
-vi /etc/sasl2/smtpd.conf # vidjeti primjer datoteke na gitu
-vi /etc/postfix/master.cf # vidjeti primjer datoteke na gitu
+vi /etc/sasl2/smtpd.conf # vidjeti primjer datoteke u repository
+vi /etc/postfix/master.cf # vidjeti primjer datoteke na repository
 systemctl start saslauthd
 systemctl enable saslauthd
 systemctl restart postfix
