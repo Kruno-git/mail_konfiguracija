@@ -1,3 +1,5 @@
+##Prođite kuharicu svakako prije no što kopirate fajlove iz repositorija na svoj mail server jer na taj način ćete izbjeći pogreške 
+
 yum install postfix dovecot cyrus-sasl-gssapi cyrus-sasl ntp ipa-admintools ipa-client oddjob bind-utils mailx -y --nogpgcheck
 hostnamectl set-hostname # Postaviti hostname mail servera
 # Prilagodavanje mreznih postavki virtualke <interface> i <ip_addr> zamjenite sa svojim parametrima
