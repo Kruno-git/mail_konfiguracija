@@ -1,0 +1,7 @@
+server_host = <ipa_domena_ovdje>
+search_base = cn=users,cn=accounts,dc=ipa,dc=domena,dc=ovdje
+query_filter = (mail=%s)
+result_attribute = uid
+bind = no
+start_tls = yes
+version = 3
