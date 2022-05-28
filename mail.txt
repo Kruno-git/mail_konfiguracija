@@ -30,7 +30,7 @@ chmod 640 /etc/postfix/smtp.keytab
 mkdir /etc/postfix-certs
 chcon -t cert_t /etc/postfix-certs
 ipa-getcert request -r -f /etc/postfix-certs/smtp.crt -k /etc/postfix-certs/smtp.key -N CN=mail.domena.ovdje -D mail.domena.ovdje -K smtp/mail.domena.ovdje
-chkconfig postfix on
+systemctl start postfix
 systemctl status postfix
 vi /etc/postfix/ldap_aliases.cf # pogledati primjer datoteke u git folderu
 postconf -e ' myhostname = domena ovdje'
