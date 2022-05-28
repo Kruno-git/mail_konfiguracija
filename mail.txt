@@ -77,7 +77,6 @@ mkdir /etc/dovecot-certs
 chcon -t cert_t /etc/dovecot-certs
 ipa-getcert request -r -f /etc/dovecot-certs/imap.crt -k /etc/dovecot-certs/imap.key -N CN=mail.domena.ovdje -D mail.domena.ovdje -K imap/mail.domena.ovdje
 vi /etc/dovecot/dovecot.conf
-vi /etc/dovecot/conf.d/10-auth.conf
 vi /etc/dovecot/conf.d/10-auth.conf 
 vi /etc/dovecot/conf.d/10-ssl.conf
 ipa group-add-member
