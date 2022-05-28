@@ -85,6 +85,7 @@ chgrp mailusers /home
 chcon -t user_home_t /home
 getent group mailusers
 vi /etc/dovecot/conf.d/10-mail.conf
+doveconf -n # Output koji daje naredba bi trebao sadržavati većinu pomjena koje ste napravili u dovecotu
 systemctl restart dovecot
 systemctl status dovecot
 
