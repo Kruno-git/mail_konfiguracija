@@ -4,6 +4,7 @@ Nastavak muke IS-a. Mail server. Slijedite kuharicu do zadnjeg slova i zamjenite
 
 !VRLO VAŽNO!
 Prođite kuharicu svakako prije no što kopirate fajlove iz repositorija na svoj mail server, na taj način ćete izbjeći pogreške.
+Fajlovi koji se nalaze u repou su konfigurirani za postavke koje su vam potrebne. Jedino što treba promijeniti su stavke koje su ili unutar <> ili na kojima piše npr: KERBEROS.REALM.OVDJE ili neka.domena.ovdje. Pratite statuse journal ili logove kako biste otkrili jeste lli u određenim konfiguracijskim datotekama pogriješili.
 
 Obratite pozornost na MX recorde na ds1 i ns1, DNS mora biti pravilno konfiguriran kako bi mail mogao raditi, isto tako, apsolutno je potrebno napraviti Mail grupu (imenujte ju npr Mail_users jer je "Mail" u sustavu grupa rezervirana riječ) na ds1 serveru i u nju staviti sve korisnike koji su predviđeni za korištenje maila.
 
