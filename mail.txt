@@ -40,8 +40,8 @@ postconf -e 'virtual_alias_domains = domena ovdje'
 postmap /etc/postfix/ldap_aliases.cf
 postconf -e ' virtual_alias_maps = ldap:/etc/postfix/ldap_aliases.cf '
 postconf -e ' import_environment = MAIL_CONFIG MAIL_DEBUG MAIL_LOGTAG TZ XAUTHORITY DISPLAY LANG=C KRB5_KTNAME=/etc/postfix/smtp.keytab'
-postconf -e ' smtpd_client_restrictions = permit_sasl_authenticated, reject'
-postconf -e ' smtpd_recipient_restrictions = permit_sasl_authenticated permit_mynetworks  check_relay_domains'
+postconf -e ' smtpd_client_restrictions = permit_sasl_authenticated permit_mynetworks permit_inet_interfaces'
+postconf -e ' smtpd_recipient_restrictions = permit_sasl_authenticated permit_mynetworks  permit_inet_interfaces'
 postconf -e ' smtpd_sender_restrictions = permit_sasl_authenticated permit_mynetworks'
 postconf -e ' smtpd_sasl_auth_enable = yes'
 postconf -e ' smtpd_sasl_path = smtpd'
@@ -58,11 +58,12 @@ postconf -e ' smtpd_tls_cert_file = /etc/postfix-certs/smtp.crt'
 postconf -e ' smtpd_tls_CAfile = /etc/ipa/ca.crt'
 postconf -e ' smtpd_tls_security_level = may'
 postconf -e ' inet_interfaces = all'
-postconf -e ' mydestination = $mydomain'
 postconf -e ' strict_mailbox_ownership = no'
+postconf -e ' mynetworks = 10.0.0.0/8 127.0.0.1'
 postconf -e ' mynetworks_style = class'
 postconf -e ' mail_name = Postfix'
 postconf -e ' mail_version = 2.10.1'
+# Nakon ovog bacite oko na main.cf datoteku, u kojoj su ove naredbe upisane te tamo promijenite eventualno ako je što potrebno /etc/postfix/main.cf
 restorecon -R /etc/postfix/
 vi /etc/sasl2/smtpd.conf # vidjeti primjer datoteke u repository
 vi /etc/postfix/master.cf # vidjeti primjer datoteke na repository
@@ -88,4 +89,3 @@ vi /etc/dovecot/conf.d/10-mail.conf
 doveconf -n # Output koji daje naredba bi trebao sadržavati većinu pomjena koje ste napravili u dovecotu
 systemctl restart dovecot
 systemctl status dovecot
-
