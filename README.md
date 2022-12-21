@@ -1,8 +1,4 @@
-hear ye hear ye!
 
-Nastavak muke IS-a. Mail server. Slijedite kuharicu do zadnjeg slova i zamjenite svoje fajlove s ovima. Naravno za svaki slučaj svoje backupajte.
-
-!VRLO VAŽNO!
 Prođite kuharicu svakako prije no što kopirate fajlove iz repositorija na svoj mail server, na taj način ćete izbjeći pogreške.
 Fajlovi koji se nalaze u repou su konfigurirani za postavke koje su vam potrebne. Jedino što treba promijeniti su stavke koje su ili unutar <> ili na kojima piše npr: KERBEROS.REALM.OVDJE ili neka.domena.ovdje. Pratite statuse journal ili logove kako biste otkrili jeste lli u određenim konfiguracijskim datotekama pogriješili.
 
@@ -15,8 +11,3 @@ U svrhu ocuvanja mentalnog zdravlja, originalni config ostavite sa ekstenzijom .
 
 Obratite pozornost na kuharice koje ce takodjer biti implementirane u svaki od repoa.
 Napravite si sliku informacijskog sustava, tako da uvijek znate gdje ste i sto radite.
-
-Sto se tice skripti koje sam isto mogao staviti u mjesto ovog pjeske dijela, možete ih sami napraviti iz kuharica.
-
-be gone daemons!
-
